@@ -1,0 +1,120 @@
+
+/*
+title @PostMapping("/media-sec")
+fontawesome5brands f3b6 Client
+participant "true" as if1
+participant "media-service\media-sec" as Service
+database "java-user-service" as Users
+
+Client->Service:POST:\n  mediaRequest,\n  userID
+Service->Users:GET:\n  userID
+Users-->Service:return userRole
+box over Service:role is **guest**
+space -4.4
+Service->*if1:""
+space -2
+if1-->Client:return **Access denied**
+destroysilent if1
+box over Service:save media\nadd owner of media to table of media users
+Service-->Client: return mediaInfoResponse
+ */
+
+/*
+title @GetMapping("/media-sec/{id}")
+fontawesome5brands f3b6 Client
+participant "true" as if1
+participant "media-service\media-sec" as Service
+database "java-user-service" as Users
+
+Client->Service:GET:\n  mediaID,\n  userID
+Service->Users:GET:\n  userID
+Users-->Service:return userRole
+box over Service:Access is not allowed\nfor this role
+space -4.4
+Service->*if1:""
+space -2
+if1-->Client:return **Access denied**
+destroysilent if1
+box over Service:get media from storage
+Service-->Client: return org.springframework.core.io.Resource
+ */
+
+/*
+title @GetMapping("/media-info-sec/{id}")
+fontawesome5brands f3b6 Client
+participant "true" as if1
+participant "media-service\media-info-sec" as Service
+database "java-user-service" as Users
+
+Client->Service:GET:\n  mediaID,\n  userID
+Service->Users:GET:\n  userID
+Users-->Service:return userRole
+box over Service:Access is not allowed\nfor this role
+space -4.4
+Service->*if1:""
+space -2
+if1-->Client:return **Access denied**
+destroysilent if1
+box over Service:get media info from database
+Service-->Client: return MediaInfoResponse
+ */
+
+/*
+title @PutMapping("/media-info-sec/{id}")
+fontawesome5brands f3b6 Client
+participant "true" as if1
+participant "media-service\media-info-sec" as Service
+database "java-user-service" as Users
+
+Client->Service:PUT:\n  mediaID,\n  mediaInfoRequest,\n  userID
+Service->Users:GET:\n  userID
+Users-->Service:return userRole
+box over Service:Access is not allowed\nfor this role
+space -4.4
+Service->*if1:""
+space -2
+if1-->Client:return **Access denied**
+destroysilent if1
+box over Service:update media info in database
+Service-->Client: return MediaInfoResponse
+ */
+
+/*
+title @PutMapping("/media-info-sec/{id}")
+fontawesome5brands f3b6 Client
+participant "true" as if1
+participant "media-service\media-info-sec" as Service
+database "java-user-service" as Users
+
+Client->Service:PUT:\n  mediaID,\n  MultipartFile mediaFile,\n  userID
+Service->Users:GET:\n  userID
+Users-->Service:return userRole
+box over Service:Access is not allowed\nfor this role
+space -4.4
+Service->*if1:""
+space -2
+if1-->Client:return **Access denied**
+destroysilent if1
+box over Service:change media file in storage
+Service-->Client: return MediaInfoResponse
+ */
+
+/*
+title @DeleteMapping("/media-sec/{id}")
+fontawesome5brands f3b6 Client
+participant "true" as if1
+participant "media-service\media-sec" as Service
+database "java-user-service" as Users
+
+Client->Service:DELETE:\n  mediaID,\n  userID
+Service->Users:GET:\n  userID
+Users-->Service:return userRole
+box over Service:Access is not allowed\nfor this role
+space -4.4
+Service->*if1:""
+space -2
+if1-->Client:return **Access denied**
+destroysilent if1
+box over Service:delete media from database and storage
+Service-->Client: return void
+ */

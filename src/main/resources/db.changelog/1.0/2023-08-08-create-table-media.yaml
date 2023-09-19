@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-media-1
+      author: wladislav
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  #autoIncrement: true
+                  autoIncrement: ${autoIncrement}
+                  #defaultValueComputed: ${autoIncrement}
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: media_pkey
+                  name: id
+                  type: UUID
+              - column:
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  name: upload_time
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR(256)
+              - column:
+                  name: description
+                  type: VARCHAR(512)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: type
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: file_name
+                  type: VARCHAR(128)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: file_size
+                  type: BIGINT
+              - column:
+                  name: file_path
+                  type: VARCHAR(128)
+            tableName: media

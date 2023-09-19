@@ -1,0 +1,34 @@
+databaseChangeLog:
+- changeSet:
+    id: add-test-data-2
+    author: wladislav
+    changes:
+    - loadData:
+        columns:
+        - column:
+            header: idc
+            name: idc
+            type: NUMERIC
+        - column:
+            header: year
+            name: year
+            type: NUMERIC
+        - column:
+            header: brand
+            name: brand
+            type: STRING
+        - column:
+            header: model
+            name: model
+            type: STRING
+        - column:
+            header: cost
+            name: cost
+            type: NUMERIC
+        commentLineStartsWith: '#'
+        encoding: UTF-8
+        file: data/mediaOld.csv
+        quotchar: '"'
+        separator: ','
+        relativeToChangelogFile: true
+        tableName: garage
