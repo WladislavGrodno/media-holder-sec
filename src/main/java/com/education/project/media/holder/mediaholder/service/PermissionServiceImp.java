@@ -1,7 +1,9 @@
 package com.education.project.media.holder.mediaholder.service;
 
-import com.education.project.media.holder.mediaholder.externals.user.ExternalUser;
-import com.education.project.media.holder.mediaholder.externals.user.UserClient;
+import com.education.project.media.holder.mediaholder.enums.Operation;
+import com.education.project.media.holder.mediaholder.enums.Role;
+import com.education.project.media.holder.mediaholder.integration.user.dto.ExternalUser;
+import com.education.project.media.holder.mediaholder.integration.user.UserClient;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

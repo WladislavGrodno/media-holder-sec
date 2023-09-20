@@ -3,8 +3,8 @@ package com.education.project.media.holder.mediaholder.service;
 import com.education.project.media.holder.mediaholder.dto.request.MediaInfoRequest;
 import com.education.project.media.holder.mediaholder.dto.request.MediaRequest;
 import com.education.project.media.holder.mediaholder.dto.response.MediaInfoResponse;
-import com.education.project.media.holder.mediaholder.model.DataPage;
-import com.education.project.media.holder.mediaholder.model.MediaSearchCriteria;
+import com.education.project.media.holder.mediaholder.dto.response.paging.DataPage;
+import com.education.project.media.holder.mediaholder.dto.response.paging.MediaSearchCriteria;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
@@ -53,5 +53,5 @@ public interface MediaServiceSec {
             @NotNull DataPage carPage,
             @NotNull MediaSearchCriteria carSearchCriteria,
             @NotNull UUID userId
-    );
+    ) throws Exception;
 }

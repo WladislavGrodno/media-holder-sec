@@ -18,29 +18,12 @@ public class StorageServiceImp implements StorageService {
     private final Path storageRootPath;
     private final PathChain pathChain;
 
-    //@Autowired
-    //StorageConfiguration storageConfiguration;
-    //StorageProperties storageProperties;// = new StorageProperties();
-
     public StorageServiceImp() {
         this.storageRootPath = Paths.get(
-                //storageProperties.getLocation()
                 "./media-storage"
         ).normalize();
         pathChain = new PathChain(storageRootPath);
     }
-
-    /*
-    @Override
-    @PostConstruct
-    public void init() throws IOException {
-        if (!Files.exists(storageRootPath)) {
-                Files.createDirectories(storageRootPath);
-                log.info("Storage {} was created", storageRootPath);
-        }
-        else log.info("Storage already exist");
-    }
-     */
 
     @Override
     public Path save(UUID id, MultipartFile file) throws Exception {

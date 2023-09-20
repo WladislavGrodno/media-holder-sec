@@ -3,10 +3,11 @@ package com.education.project.media.holder.mediaholder.service;
 import com.education.project.media.holder.mediaholder.dto.request.MediaInfoRequest;
 import com.education.project.media.holder.mediaholder.dto.request.MediaRequest;
 import com.education.project.media.holder.mediaholder.dto.response.MediaInfoResponse;
+import com.education.project.media.holder.mediaholder.enums.Operation;
 import com.education.project.media.holder.mediaholder.mapper.MediaMapper;
-import com.education.project.media.holder.mediaholder.model.DataPage;
+import com.education.project.media.holder.mediaholder.dto.response.paging.DataPage;
 import com.education.project.media.holder.mediaholder.model.Media;
-import com.education.project.media.holder.mediaholder.model.MediaSearchCriteria;
+import com.education.project.media.holder.mediaholder.dto.response.paging.MediaSearchCriteria;
 import com.education.project.media.holder.mediaholder.repository.MediaCriteriaRepository;
 import com.education.project.media.holder.mediaholder.repository.MediaRepository;
 import jakarta.validation.constraints.NotNull;
@@ -49,11 +50,14 @@ public class MediaServiceSecImp implements MediaServiceSec {
             @NotNull DataPage page,
             @NotNull MediaSearchCriteria searchCriteria,
             @NotNull UUID userId
-    ){
+    ) throws Exception {
         log.info("{\"get media info list\": {" +
                 "\"page\": \"{}," +
                 "\"search criteria\": \"{}" +
                 "\"}}", page, searchCriteria);
+
+        if(!permission.allowed(userId, Operation.GET_INFO))
+            throw new Exception("ACCESS DENIED");
 
         return new ResponseEntity<>(
                 mediaCriteriaRepository.findAllWithFilters(
@@ -97,7 +101,7 @@ public class MediaServiceSecImp implements MediaServiceSec {
     ) throws Exception {
         log.info("{\"return file\": {\"id\": {}}}", id);
 
-        if(!permission.allowed(userId, Operation.POST))
+        if(!permission.allowed(userId, Operation.GET))
             throw new Exception("ACCESS DENIED");
 
         Optional<Media> mediaOptional = mediaRepository.findById(id);
@@ -116,7 +120,7 @@ public class MediaServiceSecImp implements MediaServiceSec {
     ) throws Exception {
         log.info("{\"return file info\": {\"id\": {}}}", id);
 
-        if(!permission.allowed(userId, Operation.POST))
+        if(!permission.allowed(userId, Operation.GET_INFO))
             throw new Exception("ACCESS DENIED");
 
 
@@ -136,7 +140,7 @@ public class MediaServiceSecImp implements MediaServiceSec {
     ) throws Exception {
         log.info("{\"update file\": {\"id\": {}}}", id);
 
-        if(!permission.allowed(userId, Operation.POST))
+        if(!permission.allowed(userId, Operation.PUT))
             throw new Exception("ACCESS DENIED");
 
         String newFileName = file.getOriginalFilename();
@@ -176,7 +180,7 @@ public class MediaServiceSecImp implements MediaServiceSec {
     ) throws Exception {
         log.info("{\"update file info\": {\"id\": {}}}", id);
 
-        if(!permission.allowed(userId, Operation.POST))
+        if(!permission.allowed(userId, Operation.PUT_INFO))
             throw new Exception("ACCESS DENIED");
 
         Optional<Media> mediaOptional = mediaRepository.findById(id);
@@ -198,7 +202,7 @@ public class MediaServiceSecImp implements MediaServiceSec {
     ) throws Exception {
         log.info("{\"delete file\": {\"id\": {}}}", id);
 
-        if(!permission.allowed(userId, Operation.POST))
+        if(!permission.allowed(userId, Operation.DELETE))
             throw new Exception("ACCESS DENIED");
 
         Optional<Media> mediaOptional = mediaRepository.findById(id);

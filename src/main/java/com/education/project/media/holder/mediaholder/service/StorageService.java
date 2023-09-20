@@ -25,5 +25,4 @@ public interface StorageService {
 
     //Stream<Path> loadAll();
     //void deleteAll();
-    //void init() throws IOException;
 }

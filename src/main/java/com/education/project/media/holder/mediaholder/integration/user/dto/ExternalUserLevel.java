@@ -1,4 +1,4 @@
-package com.education.project.media.holder.mediaholder.externals.user;
+package com.education.project.media.holder.mediaholder.integration.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

@@ -2,9 +2,9 @@ package com.education.project.media.holder.mediaholder.repository;
 
 import com.education.project.media.holder.mediaholder.dto.response.MediaInfoResponse;
 import com.education.project.media.holder.mediaholder.mapper.MediaMapper;
-import com.education.project.media.holder.mediaholder.model.DataPage;
+import com.education.project.media.holder.mediaholder.dto.response.paging.DataPage;
 import com.education.project.media.holder.mediaholder.model.Media;
-import com.education.project.media.holder.mediaholder.model.MediaSearchCriteria;
+import com.education.project.media.holder.mediaholder.dto.response.paging.MediaSearchCriteria;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;

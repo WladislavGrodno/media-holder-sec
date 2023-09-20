@@ -14,9 +14,14 @@ public interface MediaMapper {
     @Mapping(source = "name", target = "fileName")
     @Mapping(source = "size", target = "fileSize")
     Media toMedia(Media media, String name, Long size);
+
     MediaInfoResponse toDtoInfo(Media media);
+
     List<MediaInfoResponse> toDtoInfo(List<Media> media);
+
     Media toMedia(MediaRequest request, String fileName, Long fileSize);
+
+}
 
 //  Page<MediaInfoResponse> toDtoInfo(Page<Media> media);
 
@@ -43,5 +48,3 @@ public interface MediaMapper {
         );
     }
      */
-
-}
