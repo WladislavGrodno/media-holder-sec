@@ -28,3 +28,7 @@ integration:
       name: ${USER_SERVICE_NAME:java-user-service}
       url: http://${USER_SERVICE_HOST:localhost}:${USER_SERVICE_PORT:8100}
       context-path: ${USER_SERVICE_PATH:}
+
+storage:
+  root:
+    path: ./media-storage

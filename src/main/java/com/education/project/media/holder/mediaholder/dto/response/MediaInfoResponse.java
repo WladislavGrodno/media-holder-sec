@@ -16,10 +16,6 @@ public record MediaInfoResponse(
                 "Upload time (milliseconds after 1970.01.01 Greenwich)",
                 example = "1525430455740003903")
         Instant uploadTime,
-        //Object uploadTime,
-        //Timestamp uploadTime,
-        //Timestamp upload_time,
-        //Long upload_time,
 
         @Schema(description = "File nickname",
                 example = "Media1")

@@ -10,17 +10,13 @@ import java.util.UUID;
 public record MediaResponse(
 
         @Schema(description = "File ID",
-                example = "1525430455740003903")
+                example = "c8d385d8-652d-4851-b015-5aa94a8ffe19")
         UUID id,
 
         @Schema(description =
-                "Upload time (milliseconds after 1970.01.01 Greenwich)",
-                example = "1525430455740003903")
-        //Object uploadTime,
+                "Upload time",
+                example = "2023-09-24T08:10:19.270612Z")
         Instant uploadTime,
-        //Timestamp upload_time,
-        //Timestamp uploadTime,
-        //Long upload_time,
 
         @Schema(description = "File nickname",
                 example = "Media1")
@@ -46,6 +42,5 @@ public record MediaResponse(
         @Schema(description = "File body"
                 //, example = "12345"
         )
-
         Resource fileBody
 ) {}

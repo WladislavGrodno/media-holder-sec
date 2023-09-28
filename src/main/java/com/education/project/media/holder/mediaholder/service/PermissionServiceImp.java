@@ -34,7 +34,7 @@ public class PermissionServiceImp implements PermissionService{
         try{
             ExternalUser user =  userClient.getUser(userID);
             if (user == null) return Role.UNKNOWN;
-            switch (user.role().roleDescr()){
+            switch (user.roleDtoResp().roleDescr()){
                 case "system admin" ->{return Role.ADMINISTRATOR;}
                 case "moderator" -> {return Role.MODERATOR;}
                 case "user" -> {return Role.USER;}

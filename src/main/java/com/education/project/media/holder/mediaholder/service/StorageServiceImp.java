@@ -1,6 +1,7 @@
 package com.education.project.media.holder.mediaholder.service;
 
 import com.education.project.media.holder.mediaholder.tools.PathChain;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -9,21 +10,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 @Service
 public class StorageServiceImp implements StorageService {
-    private final Path storageRootPath;
-    private final PathChain pathChain;
-
-    public StorageServiceImp() {
-        this.storageRootPath = Paths.get(
-                "./media-storage"
-        ).normalize();
-        pathChain = new PathChain(storageRootPath);
-    }
+    @Autowired
+    PathChain pathChain;
 
     @Override
     public Path save(UUID id, MultipartFile file) throws Exception {
@@ -41,8 +34,9 @@ public class StorageServiceImp implements StorageService {
     @Override
     public Resource load(String filePath,
                          String fileName) throws Exception {
-        Path file = pathChain.path(filePath, fileName);
-        Resource resource = new UrlResource(file.toUri());
+        //Path file = pathChain.path(filePath, fileName);
+        Resource resource =
+                new UrlResource(pathChain.path(filePath, fileName).toUri());
         if (resource.exists() || resource.isReadable()) return resource;
         throw new Exception("Could not find file");
     }

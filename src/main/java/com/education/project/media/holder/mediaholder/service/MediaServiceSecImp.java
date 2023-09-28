@@ -123,7 +123,6 @@ public class MediaServiceSecImp implements MediaServiceSec {
         if(!permission.allowed(userId, Operation.GET_INFO))
             throw new Exception("ACCESS DENIED");
 
-
         Optional<Media> mediaOptional = mediaRepository.findById(id);
         if (mediaOptional.isEmpty()) throw new Exception("NOT FOUND");
 
