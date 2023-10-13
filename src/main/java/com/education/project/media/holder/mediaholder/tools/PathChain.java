@@ -21,6 +21,11 @@ public class PathChain {
         return createChain(chain(id));
     }
 
+    public Path path(@NotNull String filePath,
+                     @NotNull String fileName) {
+        return Paths.get(filePath).resolve(fileName);
+    }
+
     public Path imaginaryPath(@NotNull UUID id) throws IOException {
         return imaginaryChain(chain(id));
     }
@@ -31,11 +36,6 @@ public class PathChain {
             path = path.resolve(
                     String.format("%02x%02x", chain[pos], chain[++pos]));
         return path;
-    }
-
-    public Path path(@NotNull String filePath,
-                     @NotNull String fileName) {
-        return Paths.get(filePath).resolve(fileName);
     }
 
     public void cleanPath(@NotNull UUID id) throws IOException {

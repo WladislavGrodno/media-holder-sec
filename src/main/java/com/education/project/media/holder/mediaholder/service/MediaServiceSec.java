@@ -17,6 +17,7 @@ public interface MediaServiceSec {
 
     ResponseEntity<MediaInfoResponse> createMedia(
             @NotNull MediaRequest media,
+            //@NotNull MultipartFile file,
             @NotNull UUID userID
     ) throws Exception;
 
@@ -49,9 +50,9 @@ public interface MediaServiceSec {
                     @NotNull UUID userId
     ) throws Exception;
 
-    ResponseEntity<Page<MediaInfoResponse>> mediaCustomListRead(
-            @NotNull DataPage carPage,
-            @NotNull MediaSearchCriteria carSearchCriteria,
+    ResponseEntity<Page<MediaInfoResponse>> mediaInfoCustomListRead(
+            @NotNull DataPage page,
+            @NotNull MediaSearchCriteria searchCriteria,
             @NotNull UUID userId
     ) throws Exception;
 }

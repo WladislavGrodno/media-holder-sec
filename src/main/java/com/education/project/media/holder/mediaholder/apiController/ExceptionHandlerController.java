@@ -1,6 +1,9 @@
 package com.education.project.media.holder.mediaholder.apiController;
 
 import com.education.project.media.holder.mediaholder.dto.response.StatusResponse;
+import com.education.project.media.holder.mediaholder.exception.ExceptionAccessDenied;
+import com.education.project.media.holder.mediaholder.exception.ExceptionNotFound;
+import com.education.project.media.holder.mediaholder.exception.ExceptionOperationSuccessful;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.http.HttpStatus;
@@ -51,14 +54,7 @@ public class ExceptionHandlerController {
     public ResponseEntity<StatusResponse> handleException(Exception exception) {
         String eMessage = exception.getMessage();
         switch (eMessage){
-            case "OPERATION SUCCESSFUL" -> {
-                log.info(eMessage);
-                return new ResponseEntity<>(
-                        new StatusResponse(eMessage, eMessage),
-                        HttpStatus.NO_CONTENT
-                );
-            }
-            case "NOT FOUND", "TABLE IS EMPTY" -> {
+            case "TABLE IS EMPTY" -> {
                 log.info(eMessage);
                 return new ResponseEntity<>(
                         new StatusResponse(eMessage, eMessage),
@@ -73,5 +69,29 @@ public class ExceptionHandlerController {
                 );
             }
         }
+    }
+
+    @ExceptionHandler(ExceptionOperationSuccessful.class)
+    public ResponseEntity<StatusResponse> handleOperationSuccessful() {
+        String message = "OPERATION SUCCESSFUL";
+        log.info(message);
+        return new ResponseEntity<>(
+                new StatusResponse(message,message), HttpStatus.NO_CONTENT);
+    }
+
+    @ExceptionHandler(ExceptionAccessDenied.class)
+    public ResponseEntity<StatusResponse> handleAccessDeniedException() {
+        String message = "ACCESS DENIED";
+        log.info(message);
+        return new ResponseEntity<>(
+                new StatusResponse(message, message), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(ExceptionNotFound.class)
+    public ResponseEntity<StatusResponse> handleExceptionNotFound() {
+        String message = "NOT FOUND";
+        log.info(message);
+        return new ResponseEntity<>(
+                new StatusResponse(message, message), HttpStatus.NOT_FOUND);
     }
 }

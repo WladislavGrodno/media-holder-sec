@@ -16,14 +16,15 @@ import java.util.UUID;
 @Service
 public class StorageServiceImp implements StorageService {
     @Autowired
-    PathChain pathChain;
+    private PathChain pathChain;
 
     @Override
     public Path save(UUID id, MultipartFile file) throws Exception {
         Path path = pathChain.path(id);
         String name = file.getOriginalFilename();
-        if (name == null) throw new Exception("EMPTY FILE NAME");
-
+        if (name == null || name.isEmpty()) {
+            throw new Exception("EMPTY FILE NAME");
+        }
         Files.copy(
                 file.getInputStream(),
                 path.resolve(name),
@@ -34,18 +35,24 @@ public class StorageServiceImp implements StorageService {
     @Override
     public Resource load(String filePath,
                          String fileName) throws Exception {
-        //Path file = pathChain.path(filePath, fileName);
-        Resource resource =
-                new UrlResource(pathChain.path(filePath, fileName).toUri());
-        if (resource.exists() || resource.isReadable()) return resource;
+        Path file = pathChain.path(filePath, fileName);
+        Resource resource = new UrlResource(file.toUri());
+        if (resource.exists() && resource.isReadable()) {
+            return resource;
+        }
         throw new Exception("Could not find file");
     }
 
     @Override
     public boolean delete(String filePath,
                           String fileName) throws IOException {
+        if (fileName.isEmpty()){
+            return true;
+        }
         Path path = pathChain.path(filePath, fileName);
-        if (Files.exists(path)) Files.delete(path);
+        if (Files.exists(path)) {
+            Files.delete(path);
+        }
         return !Files.exists(path);
     }
 

@@ -23,11 +23,16 @@ public class PermissionServiceImp implements PermissionService{
             @NotNull Operation operation){
 
         switch (operation){
-            case DELETE -> {return getRole(userID) == Role.ADMINISTRATOR;}
-            case GET, GET_INFO -> {return true;}
+            case DELETE, GET_INFO_LIST -> {
+                return getRole(userID) == Role.ADMINISTRATOR;
+            }
+            case GET, GET_INFO -> {
+                return true;
+            }
             default -> {
                 Role role = getRole(userID);
-                return role != Role.ANONYMOUS && role != Role.UNKNOWN;}
+                return role != Role.ANONYMOUS && role != Role.UNKNOWN;
+            }
         }
     }
     private Role getRole(@NotNull UUID userID){
@@ -35,11 +40,21 @@ public class PermissionServiceImp implements PermissionService{
             ExternalUser user =  userClient.getUser(userID);
             if (user == null) return Role.UNKNOWN;
             switch (user.roleDtoResp().roleDescr()){
-                case "system admin" ->{return Role.ADMINISTRATOR;}
-                case "moderator" -> {return Role.MODERATOR;}
-                case "user" -> {return Role.USER;}
-                case "anonymous" -> {return Role.ANONYMOUS;}
-                default -> {return Role.UNKNOWN;}
+                case "system admin" ->{
+                    return Role.ADMINISTRATOR;
+                }
+                case "moderator" -> {
+                    return Role.MODERATOR;
+                }
+                case "user" -> {
+                    return Role.USER;
+                }
+                case "anonymous" -> {
+                    return Role.ANONYMOUS;
+                }
+                default -> {
+                    return Role.UNKNOWN;
+                }
             }
         }
         catch (Exception e){

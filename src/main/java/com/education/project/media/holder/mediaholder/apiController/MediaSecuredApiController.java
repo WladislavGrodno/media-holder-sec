@@ -3,15 +3,20 @@ package com.education.project.media.holder.mediaholder.apiController;
 import com.education.project.media.holder.mediaholder.dto.request.MediaInfoRequest;
 import com.education.project.media.holder.mediaholder.dto.request.MediaRequest;
 import com.education.project.media.holder.mediaholder.dto.response.MediaInfoResponse;
+import com.education.project.media.holder.mediaholder.dto.response.paging.DataPage;
+import com.education.project.media.holder.mediaholder.dto.response.paging.MediaSearchCriteria;
 import com.education.project.media.holder.mediaholder.service.MediaServiceSec;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,13 +35,15 @@ import java.util.UUID;
  * CRUD operations Secured media store
  */
 @RestController
+@Validated
 @Tag(name = "Media-service-sec API")
 public class MediaSecuredApiController {
     @Autowired
     @Qualifier("mediaServiceSecImp")
     private MediaServiceSec mediaService;
 
-    @PostMapping("/media")
+    @PostMapping(path = "/media", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    //@PostMapping("/media")
     @Operation(
             summary = "Add a new media to storage by authorized user",
             description = "Add a new media in to storage by authorized user")
@@ -44,9 +52,29 @@ public class MediaSecuredApiController {
     @ApiResponse(responseCode = "404", description = "The media was not added")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<MediaInfoResponse> createMedia(
-            @Valid @ModelAttribute MediaRequest media,
-            @Valid @RequestParam UUID userID
+            @ModelAttribute//("media")
+            //@RequestParam
+            //@RequestBody
+            //@RequestPart
+            MediaRequest media,
+            //@RequestBody MediaRequest media//,
+
+            @RequestParam
+            //@RequestPart
+            UUID userID//,
+          //  @NotNull(message = "Null file is denied")
+            //@ModelAttribute
+            //@RequestBody
+            //@RequestParam
+            //MultipartFile fileBody
     ) throws Exception {
+        //System.out.println(media);
+        //System.out.println(userID);
+        //System.out.println(fileBody.getSize());
+        //System.out.println(fileBody);
+
+        //return null;
+        //return mediaService.createMedia(media, fileBody, userID);
         return mediaService.createMedia(media, userID);
     }
 
@@ -71,8 +99,8 @@ public class MediaSecuredApiController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
 
     public ResponseEntity<Resource> getMediaById(
-            @Valid @PathVariable UUID id,
-            @Valid @RequestParam UUID userID
+            @PathVariable UUID id,
+            @RequestParam UUID userID
     ) throws Exception {
         return mediaService.getMediaById(id, userID);
     }
@@ -94,8 +122,8 @@ public class MediaSecuredApiController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
 
     public ResponseEntity<MediaInfoResponse> getMediaInfoById(
-            @Valid @PathVariable UUID id,
-            @Valid @RequestParam UUID userID
+            @PathVariable UUID id,
+            @RequestParam UUID userID
     ) throws Exception {
         return mediaService.getMediaInfoById(id, userID);
     }
@@ -118,9 +146,9 @@ public class MediaSecuredApiController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
 
     public ResponseEntity<MediaInfoResponse> updateMedia(
-            @Valid @PathVariable UUID id,
-            @Valid @RequestBody MultipartFile mediaFile,
-            @Valid @RequestParam UUID userID
+            @PathVariable UUID id,
+            @RequestBody MultipartFile mediaFile,
+            @RequestParam UUID userID
     ) throws Exception {
         return mediaService.updateMediaById(id, mediaFile, userID);
     }
@@ -143,9 +171,9 @@ public class MediaSecuredApiController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
 
     public ResponseEntity<MediaInfoResponse> updateMediaInfo(
-            @Valid @PathVariable UUID id,
-            @Valid @RequestBody MediaInfoRequest mediaInfo,
-            @Valid @RequestParam UUID userID
+            @PathVariable UUID id,
+            @RequestBody MediaInfoRequest mediaInfo,
+            @RequestParam UUID userID
     ) throws Exception {
         return mediaService.updateMediaInfoById(id, mediaInfo, userID);
     }
@@ -166,13 +194,13 @@ public class MediaSecuredApiController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
 
     public void deleteMediaById(
-            @Valid @PathVariable UUID id,
-            @Valid @RequestParam UUID userID
+            @PathVariable UUID id,
+            @RequestParam UUID userID
     ) throws Exception {
         mediaService.eraseMedia(id, userID);
     }
 
-    /*
+
     @GetMapping("/media-info-list")
     @Operation(
             summary = "Returns selected media info",
@@ -181,11 +209,12 @@ public class MediaSecuredApiController {
     @ApiResponse(responseCode = "400", description = "Bad request")
     @ApiResponse(responseCode = "404", description = "The database is empty")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<Page<MediaInfoResponse>> getAlienCars(
-            @Valid @RequestBody DataPage page,
-            @Valid @RequestBody MediaSearchCriteria searchCriteria){
-        return mediaService.mediaListCustomRead(page, searchCriteria);
+    public ResponseEntity<Page<MediaInfoResponse>> mediaInfoList(
+             DataPage page,
+             MediaSearchCriteria searchCriteria,
+             @RequestParam UUID userID
+    ) throws Exception {
+        return mediaService.mediaInfoCustomListRead(
+                page, searchCriteria, userID);
     }
-     */
-
 }
