@@ -1,4 +1,4 @@
-package com.education.project.media.holder.mediaholder.integration.media;
+package com.education.project.media.holder.mediaholder.model.media;
 
 import com.education.project.media.holder.mediaholder.dto.request.MediaRequest;
 import com.education.project.media.holder.mediaholder.dto.response.MediaInfoResponse;

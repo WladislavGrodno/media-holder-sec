@@ -2,30 +2,28 @@ package com.education.project.media.holder.mediaholder.apiController;
 
 import com.education.project.media.holder.mediaholder.dto.request.MediaInfoRequest;
 import com.education.project.media.holder.mediaholder.dto.request.MediaRequest;
-import com.education.project.media.holder.mediaholder.dto.response.MediaInfoResponse;
-import com.education.project.media.holder.mediaholder.enums.Role;
-import com.education.project.media.holder.mediaholder.integration.media.MediaClient;
 import com.education.project.media.holder.mediaholder.integration.user.UserClient;
 import com.education.project.media.holder.mediaholder.integration.user.dto.ExternalUser;
 import com.education.project.media.holder.mediaholder.integration.user.dto.ExternalUserLevel;
 import com.education.project.media.holder.mediaholder.integration.user.dto.ExternalUserRole;
-import com.education.project.media.holder.mediaholder.model.Media;
 import com.education.project.media.holder.mediaholder.repository.MediaRepository;
+import com.education.project.media.holder.mediaholder.service.PermissionServiceImp;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import io.restassured.specification.MultiPartSpecification;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -33,11 +31,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
@@ -51,6 +44,7 @@ import static org.hamcrest.Matchers.hasSize;
 //import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
+@ExtendWith(MockitoExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 class MediaSecuredApiControllerTest {
@@ -65,6 +59,8 @@ class MediaSecuredApiControllerTest {
     @Mock
     private static UserClient userClient;
 
+    @InjectMocks
+    private PermissionServiceImp permissionServiceImp;
 
     @LocalServerPort
     private Integer port;
@@ -190,13 +186,15 @@ class MediaSecuredApiControllerTest {
 
         final MediaRequest mediaRequest = new MediaRequest(
                 "Test name", "Test description", 1, file);
-
+/*
         Mockito.when(userClient.getUser(userID)).thenReturn(userUser);
         Mockito.when(userClient.getUser(adminID)).thenReturn(adminUser);
         Mockito.when(userClient.getUser(anonymousID)).thenReturn(anonymousUser);
         Mockito.when(userClient.getUser(moderatorID)).thenReturn(moderatorUser);
         Mockito.when(userClient.getUser(unknownID)).thenReturn(unknownUser);
 
+
+ */
         //ResponseEntity<MediaInfoResponse> response = mediaClient.createMedia(mediaRequest, file, userID);
 
 
@@ -245,8 +243,8 @@ MultipartFile multipartFile = new MockMultipartFile("test.xlsx", new FileInputSt
     //Files.createFile(newFile);
       //      Files.writeString(newFile, "Hello, Life!");
         //}
-/*
 
+/*
         given()
                 //.contentType(ContentType.JSON)
                 //.body(mediaRequest)
@@ -264,7 +262,7 @@ MultipartFile multipartFile = new MockMultipartFile("test.xlsx", new FileInputSt
                 //.multiPart("fileBody", file)
                 //.multiPart(new File(mediaPathString +"/test.odt"))
                 //.queryParam("fileBody", new File(mediaPathString +"/test.odt"))
-
+                .when()
                 //.contentType(ContentType.MULTIPART)
                 .contentType("multipart/form-data")
                 //.body(mediaRequest)
@@ -278,7 +276,7 @@ MultipartFile multipartFile = new MockMultipartFile("test.xlsx", new FileInputSt
                 //.queryParam("fileBody", new File("./test.odt"))
                 //.queryParam("userID", mediaID)
 //                .body(userID)
-                .when()
+
                 .post("/media-service-sec/media")
                 //.get("/media-service-sec/media")
                 .then()
@@ -286,8 +284,10 @@ MultipartFile multipartFile = new MockMultipartFile("test.xlsx", new FileInputSt
 //                .body(".", hasSize(2));
 
 
- */
 
+
+
+ */
 
 
 
@@ -306,8 +306,17 @@ MultipartFile multipartFile = new MockMultipartFile("test.xlsx", new FileInputSt
     void updateMedia() {
     }
 
+    private final static String url = "/media-service-sec";
+
     @Test
     void updateMediaInfo() {
+/*
+        Mockito.when(userClient.getUser(userID)).thenReturn(userUser);
+        Mockito.when(userClient.getUser(adminID)).thenReturn(adminUser);
+        Mockito.when(userClient.getUser(anonymousID)).thenReturn(anonymousUser);
+        Mockito.when(userClient.getUser(moderatorID)).thenReturn(moderatorUser);
+        Mockito.when(userClient.getUser(unknownID)).thenReturn(unknownUser);
+
 
         final MediaInfoRequest mediaInfoRequest = new MediaInfoRequest(
                 "Updated Test name",
@@ -315,17 +324,22 @@ MultipartFile multipartFile = new MockMultipartFile("test.xlsx", new FileInputSt
                 );
 
 
-/*
+
         given()
                 .contentType(ContentType.JSON)
-                .when()
                 .pathParam("id", mediaID)
                 .body(mediaInfoRequest)
-                .queryParam("userID", userID)
-                .put("/media-service-sec/media-info/{id}")
+                .queryParam("userID", adminID)
+                //.queryParam("userID", userID)
+                .when()
+                .put(url + "/media-info/{id}")
+
                 .then()
+                .log().all()
                 .statusCode(403);
                 //.body(".", hasSize(2));
+
+
 
 
  */

@@ -9,7 +9,6 @@ import com.education.project.media.holder.mediaholder.service.MediaServiceSec;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,6 +40,13 @@ public class MediaSecuredApiController {
     @Qualifier("mediaServiceSecImp")
     private MediaServiceSec mediaService;
 
+    /**
+     * Put media-file to the storage
+     * @param media MediaRequest object
+     * @param userID User ID
+     * @return MediaInfoResponse object
+     * @throws Exception thrown by strange situations
+     */
     @PostMapping(path = "/media", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     //@PostMapping("/media")
     @Operation(
@@ -52,29 +57,15 @@ public class MediaSecuredApiController {
     @ApiResponse(responseCode = "404", description = "The media was not added")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<MediaInfoResponse> createMedia(
-            @ModelAttribute//("media")
+            @ModelAttribute
+            //("media")
             //@RequestParam
             //@RequestBody
             //@RequestPart
             MediaRequest media,
-            //@RequestBody MediaRequest media//,
-
             @RequestParam
-            //@RequestPart
-            UUID userID//,
-          //  @NotNull(message = "Null file is denied")
-            //@ModelAttribute
-            //@RequestBody
-            //@RequestParam
-            //MultipartFile fileBody
+            UUID userID
     ) throws Exception {
-        //System.out.println(media);
-        //System.out.println(userID);
-        //System.out.println(fileBody.getSize());
-        //System.out.println(fileBody);
-
-        //return null;
-        //return mediaService.createMedia(media, fileBody, userID);
         return mediaService.createMedia(media, userID);
     }
 

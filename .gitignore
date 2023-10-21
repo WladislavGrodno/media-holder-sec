@@ -1,5 +1,6 @@
 media-storage
 *.log
+docs/*.odt
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar

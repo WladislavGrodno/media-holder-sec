@@ -14,7 +14,6 @@ import com.education.project.media.holder.mediaholder.model.Media;
 import com.education.project.media.holder.mediaholder.repository.MediaCriteriaRepository;
 import com.education.project.media.holder.mediaholder.repository.MediaRepository;
 import com.education.project.media.holder.mediaholder.tools.PathChain;
-import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,9 +23,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -101,8 +98,8 @@ class MediaServiceSecImpTest {
             MediaType.TEXT_PLAIN_VALUE,
             "Hello, World!".getBytes());
 
-
      */
+
     private final Instant instantNow = Instant.now();
 
 
@@ -396,56 +393,32 @@ class MediaServiceSecImpTest {
         assertFalse(Files.exists(mediaPath.resolve(fileName)));
     }
 
-/*
+
     @Test
     void mediaCustomListRead() throws Exception {
         Mockito.when(permission.allowed(adminID, Operation.GET_INFO_LIST)).thenReturn(true);
         Mockito.when(permission.allowed(anonymousID, Operation.GET_INFO_LIST)).thenReturn(false);
 
+        Page<MediaInfoResponse> pageResponse = Mockito.mock(Page.class);
+
         DataPage page = new DataPage();
+        page.setPageNumber(0);
+        page.setPageSize(5);
+        page.setSortDirection(Sort.Direction.ASC);
+        page.setSortBy("firstName");
+
         MediaSearchCriteria searchCriteria = new MediaSearchCriteria();
+        searchCriteria.setName("Strix");
+        searchCriteria.setDescription("Nebulosa");
+        searchCriteria.setType(1);
 
+        Mockito.when(mediaCriteriaRepository.findAllWithFilters(
+                page, searchCriteria)).thenReturn(pageResponse);
 
-        assertThrows(
-                ExceptionAccessDenied.class,
-                () -> mediaServiceSecImp.mediaInfoCustomListRead(
-                        page, searchCriteria, anonymousID));
-
-
-
-
-        Mockito.when(mediaCriteriaRepository.findAllWithFilters(page, searchCriteria))
-                .thenReturn();
-
-        TypedQuery<Media> typedQuery = entityManager.createQuery(criteriaQuery);
-        typedQuery.setFirstResult(page.getPageNumber() * page.getPageSize());
-        typedQuery.setMaxResults(page.getPageSize());
-
-
-        Pageable pageable = PageRequest.of(
-                page.getPageNumber(),
-                page.getPageSize(),
-                Sort.by(page.getSortDirection(), page.getSortBy()));
-
-        return new PageImpl<>(
-                mediaMapper.toDtoInfo(typedQuery.getResultList()),
-                pageable,
-                mediasCount);
-
-
-        assertEquals(
-                new ResponseEntity<>(new ,
+        assertEquals(new ResponseEntity<>(pageResponse,HttpStatus.OK),
                 mediaServiceSecImp.mediaInfoCustomListRead(page, searchCriteria, adminID));
-
-
-
-//        assertThrows(
-//                ExceptionAccessDenied.class,
-//                () -> mediaServiceSecImp.mediaInfoCustomListRead(
-//                        page, searchCriteria, adminID));
-//
-
+        assertThrows(ExceptionAccessDenied.class,
+                ()->mediaServiceSecImp.mediaInfoCustomListRead(page, searchCriteria, anonymousID));
     }
- */
 
 }

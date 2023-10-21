@@ -68,7 +68,6 @@ public class MediaServiceSecImp implements MediaServiceSec {
         );
     }
 
-
     @Override
     public ResponseEntity<MediaInfoResponse> createMedia(
             @NotNull MediaRequest mediaRequest,
@@ -95,7 +94,6 @@ public class MediaServiceSecImp implements MediaServiceSec {
                 mediaMapper.toDtoInfo(mediaRepository.save(mediaResult)),
                 HttpStatus.OK);
     }
-
 
     @Override
     public ResponseEntity<Resource> getMediaById(
