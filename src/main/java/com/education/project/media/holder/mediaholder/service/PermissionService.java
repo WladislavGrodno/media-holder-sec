@@ -1,5 +1,6 @@
 package com.education.project.media.holder.mediaholder.service;
 
+import com.education.project.media.holder.mediaholder.enums.Operation;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;

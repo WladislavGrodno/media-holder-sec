@@ -1,5 +1,8 @@
-package com.education.project.media.holder.mediaholder.service;
+package com.education.project.media.holder.mediaholder.enums;
 
+/**
+ *List of operation types
+ */
 public enum Operation {
     POST,
     GET,

@@ -1,7 +1,6 @@
 package com.education.project.media.holder.mediaholder.tools;
 
 import jakarta.validation.constraints.NotNull;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.DirectoryStream;
@@ -9,13 +8,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PathChain {
-    private final Path storageRootPath;
-
-    public PathChain(@NotNull Path storageRootPath) {
-        this.storageRootPath = storageRootPath;
-    }
+    private final Path storageRootPath =
+//          Paths.get("${storage.root.path:./media-storage}").normalize();
+            Paths.get("./media-storage").normalize();
 
     public Path path(@NotNull UUID id) throws IOException {
         return createChain(chain(id));
@@ -24,6 +23,18 @@ public class PathChain {
     public Path path(@NotNull String filePath,
                      @NotNull String fileName) {
         return Paths.get(filePath).resolve(fileName);
+    }
+
+    public Path imaginaryPath(@NotNull UUID id) throws IOException {
+        return imaginaryChain(chain(id));
+    }
+
+    private Path imaginaryChain(byte[] chain) throws IOException {
+        Path path = storageRootPath;
+        for (int pos = 0; pos < chain.length; pos++)
+            path = path.resolve(
+                    String.format("%02x%02x", chain[pos], chain[++pos]));
+        return path;
     }
 
     public void cleanPath(@NotNull UUID id) throws IOException {

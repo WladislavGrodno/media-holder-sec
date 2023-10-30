@@ -1,4 +1,4 @@
-package com.education.project.media.holder.mediaholder.model;
+package com.education.project.media.holder.mediaholder.dto.response.paging;
 
 import lombok.Getter;
 import lombok.Setter;

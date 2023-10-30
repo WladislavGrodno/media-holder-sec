@@ -2,9 +2,9 @@ package com.education.project.media.holder.mediaholder.repository;
 
 import com.education.project.media.holder.mediaholder.dto.response.MediaInfoResponse;
 import com.education.project.media.holder.mediaholder.mapper.MediaMapper;
-import com.education.project.media.holder.mediaholder.model.DataPage;
+import com.education.project.media.holder.mediaholder.dto.response.paging.DataPage;
 import com.education.project.media.holder.mediaholder.model.Media;
-import com.education.project.media.holder.mediaholder.model.MediaSearchCriteria;
+import com.education.project.media.holder.mediaholder.dto.response.paging.MediaSearchCriteria;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -39,7 +39,6 @@ public class MediaCriteriaRepository {
     public MediaCriteriaRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
         this.criteriaBuilder = entityManager.getCriteriaBuilder();
-
     }
 
     public Page<MediaInfoResponse> findAllWithFilters(
@@ -76,7 +75,6 @@ public class MediaCriteriaRepository {
 
     private void setOrder(
             DataPage page, CriteriaQuery<Media> criteria, Root<Media> root){
-
         if (page.getSortDirection().equals(Sort.Direction.ASC)){
             criteria.orderBy(criteriaBuilder.asc(root.get(page.getSortBy())));
         }
@@ -115,5 +113,4 @@ public class MediaCriteriaRepository {
         }
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     }
-
 }

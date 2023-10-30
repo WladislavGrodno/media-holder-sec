@@ -3,10 +3,14 @@ package com.education.project.media.holder.mediaholder.service;
 import com.education.project.media.holder.mediaholder.dto.request.MediaInfoRequest;
 import com.education.project.media.holder.mediaholder.dto.request.MediaRequest;
 import com.education.project.media.holder.mediaholder.dto.response.MediaInfoResponse;
+import com.education.project.media.holder.mediaholder.enums.Operation;
+import com.education.project.media.holder.mediaholder.exception.ExceptionAccessDenied;
+import com.education.project.media.holder.mediaholder.exception.ExceptionNotFound;
+import com.education.project.media.holder.mediaholder.exception.ExceptionOperationSuccessful;
 import com.education.project.media.holder.mediaholder.mapper.MediaMapper;
-import com.education.project.media.holder.mediaholder.model.DataPage;
+import com.education.project.media.holder.mediaholder.dto.response.paging.DataPage;
 import com.education.project.media.holder.mediaholder.model.Media;
-import com.education.project.media.holder.mediaholder.model.MediaSearchCriteria;
+import com.education.project.media.holder.mediaholder.dto.response.paging.MediaSearchCriteria;
 import com.education.project.media.holder.mediaholder.repository.MediaCriteriaRepository;
 import com.education.project.media.holder.mediaholder.repository.MediaRepository;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +23,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -28,7 +31,6 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class MediaServiceSecImp implements MediaServiceSec {
-
     @Autowired
     private MediaRepository mediaRepository;
     @Autowired
@@ -39,56 +41,52 @@ public class MediaServiceSecImp implements MediaServiceSec {
     @Autowired
     @Qualifier("storageServiceImp")
     private StorageService storageService;
-
     @Autowired
     @Qualifier("permissionServiceImp")
     private PermissionService permission;
 
     @Override
-    public ResponseEntity<Page<MediaInfoResponse>> mediaCustomListRead(
+    public ResponseEntity<Page<MediaInfoResponse>> mediaInfoCustomListRead(
             @NotNull DataPage page,
             @NotNull MediaSearchCriteria searchCriteria,
             @NotNull UUID userId
-    ){
+    ) throws Exception {
         log.info("{\"get media info list\": {" +
                 "\"page\": \"{}," +
                 "\"search criteria\": \"{}" +
                 "\"}}", page, searchCriteria);
 
+        if(!permission.allowed(userId, Operation.GET_INFO_LIST))
+            throw new ExceptionAccessDenied();
         return new ResponseEntity<>(
-                mediaCriteriaRepository.findAllWithFilters(
-                        page, searchCriteria),
+                mediaCriteriaRepository
+                        .findAllWithFilters(page, searchCriteria),
                 HttpStatus.OK
         );
     }
-
 
     @Override
     public ResponseEntity<MediaInfoResponse> createMedia(
             @NotNull MediaRequest mediaRequest,
             @NotNull UUID userId
     ) throws Exception {
-
         MultipartFile file = mediaRequest.fileBody();
         log.info("{\"add file\": {\"file size\": \"{}\"}}", file.getSize());
 
         if(!permission.allowed(userId, Operation.POST))
-            throw new Exception("ACCESS DENIED");
+            throw new ExceptionAccessDenied();
 
         Media mediaResult = mediaRepository.save(
                 mediaMapper.toMedia(
                         mediaRequest,
                         file.getOriginalFilename(),
                         file.getSize()));
-
         mediaResult.setFilePath(
                 storageService.save(mediaResult.getId(), file).toString());
-
         return new ResponseEntity<>(
                 mediaMapper.toDtoInfo(mediaRepository.save(mediaResult)),
                 HttpStatus.OK);
     }
-
 
     @Override
     public ResponseEntity<Resource> getMediaById(
@@ -97,12 +95,12 @@ public class MediaServiceSecImp implements MediaServiceSec {
     ) throws Exception {
         log.info("{\"return file\": {\"id\": {}}}", id);
 
-        if(!permission.allowed(userId, Operation.POST))
-            throw new Exception("ACCESS DENIED");
+        if(!permission.allowed(userId, Operation.GET))
+            throw new ExceptionAccessDenied();
 
         Optional<Media> mediaOptional = mediaRepository.findById(id);
-        if (mediaOptional.isEmpty()) throw new Exception("NOT FOUND");
-
+        if (mediaOptional.isEmpty())
+            throw new ExceptionNotFound();
         Media media = mediaOptional.get();
         return new ResponseEntity<>(
                 storageService.load(media.getFilePath(), media.getFileName()),
@@ -116,13 +114,12 @@ public class MediaServiceSecImp implements MediaServiceSec {
     ) throws Exception {
         log.info("{\"return file info\": {\"id\": {}}}", id);
 
-        if(!permission.allowed(userId, Operation.POST))
-            throw new Exception("ACCESS DENIED");
-
+        if(!permission.allowed(userId, Operation.GET_INFO))
+            throw new ExceptionAccessDenied();
 
         Optional<Media> mediaOptional = mediaRepository.findById(id);
-        if (mediaOptional.isEmpty()) throw new Exception("NOT FOUND");
-
+        if (mediaOptional.isEmpty())
+            throw new ExceptionNotFound();
         return new ResponseEntity<>(
                 mediaMapper.toDtoInfo(mediaOptional.get()),
                 HttpStatus.OK);
@@ -136,35 +133,32 @@ public class MediaServiceSecImp implements MediaServiceSec {
     ) throws Exception {
         log.info("{\"update file\": {\"id\": {}}}", id);
 
-        if(!permission.allowed(userId, Operation.POST))
-            throw new Exception("ACCESS DENIED");
+        if(!permission.allowed(userId, Operation.PUT))
+            throw new ExceptionAccessDenied();
 
         String newFileName = file.getOriginalFilename();
         Long newFileSize = file.getSize();
-        if (newFileName == null) throw new Exception("EMPTY FILE NAME");
+        if (newFileName == null || newFileName.isEmpty())
+            throw new Exception("EMPTY FILE NAME");
 
         Optional<Media> mediaOptional = mediaRepository.findById(id);
-        if (mediaOptional.isEmpty()) throw new Exception("NOT FOUND");
+        if (mediaOptional.isEmpty())
+            throw new ExceptionNotFound();
+
         Media media = mediaOptional.get();
-
         Path basePath = storageService.save(id, file);
-
         if (!Files.exists(basePath.resolve(newFileName)))
             throw new Exception("FILE NOT ACCEPTED");
 
         String oldFileName = media.getFileName();
         Long oldFileSize = media.getFileSize();
-
         media.setFileName(newFileName);
         media.setFileSize(newFileSize);
-        mediaRepository.save(media);
-
+        Media savedMedia = mediaRepository.save(media);
         Files.delete(basePath.resolve(oldFileName));
-
         log.info("file size: old = {}, new = {}", oldFileSize, newFileSize);
-
         return new ResponseEntity<>(
-                mediaMapper.toDtoInfo(media),
+                mediaMapper.toDtoInfo(savedMedia),
                 HttpStatus.OK);
     }
 
@@ -176,16 +170,16 @@ public class MediaServiceSecImp implements MediaServiceSec {
     ) throws Exception {
         log.info("{\"update file info\": {\"id\": {}}}", id);
 
-        if(!permission.allowed(userId, Operation.POST))
-            throw new Exception("ACCESS DENIED");
+        if(!permission.allowed(userId, Operation.PUT_INFO))
+            throw new ExceptionAccessDenied();
 
         Optional<Media> mediaOptional = mediaRepository.findById(id);
-        if (mediaOptional.isEmpty()) throw new Exception("NOT FOUND");
+        if (mediaOptional.isEmpty())
+            throw new ExceptionNotFound();
 
         Media media = mediaOptional.get();
         media.setName(mediaInfo.name());
         media.setDescription(mediaInfo.description());
-
         return new ResponseEntity<>(
                 mediaMapper.toDtoInfo(mediaRepository.save(media)),
                 HttpStatus.OK);
@@ -198,22 +192,22 @@ public class MediaServiceSecImp implements MediaServiceSec {
     ) throws Exception {
         log.info("{\"delete file\": {\"id\": {}}}", id);
 
-        if(!permission.allowed(userId, Operation.POST))
-            throw new Exception("ACCESS DENIED");
+        if(!permission.allowed(userId, Operation.DELETE))
+            throw new ExceptionAccessDenied();
 
         Optional<Media> mediaOptional = mediaRepository.findById(id);
-        if (mediaOptional.isEmpty()) return;
+        if (mediaOptional.isEmpty())
+            throw new ExceptionOperationSuccessful();
 
         Media media = mediaOptional.get();
         if (media.getType() != -1) {
             media.setType(-1);
             mediaRepository.save(media);
         }
-
         if (storageService.delete(media.getFilePath(), media.getFileName())) {
             storageService.cleanPath(id);
             mediaRepository.deleteById(id);
         }
-        throw new Exception("OPERATION SUCCESSFUL");
+        throw new ExceptionOperationSuccessful();
     }
 }
