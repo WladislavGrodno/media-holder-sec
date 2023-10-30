@@ -14,25 +14,21 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.UUID;
 
 public interface MediaServiceSec {
-
     ResponseEntity<MediaInfoResponse> createMedia(
             @NotNull MediaRequest media,
             //@NotNull MultipartFile file,
             @NotNull UUID userID
     ) throws Exception;
 
-
     ResponseEntity<Resource> getMediaById(
             @NotNull UUID id,
             @NotNull UUID userId
     ) throws Exception;
 
-
     ResponseEntity<MediaInfoResponse> getMediaInfoById(
             @NotNull UUID id,
             @NotNull UUID userId
     ) throws Exception;
-
 
     ResponseEntity<MediaInfoResponse> updateMediaById(
             @NotNull UUID id,

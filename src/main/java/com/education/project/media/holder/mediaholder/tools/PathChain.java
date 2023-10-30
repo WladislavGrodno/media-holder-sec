@@ -1,8 +1,6 @@
 package com.education.project.media.holder.mediaholder.tools;
 
 import jakarta.validation.constraints.NotNull;
-import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.DirectoryStream;
@@ -10,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
+import org.springframework.stereotype.Service;
 
 @Service
 public class PathChain {

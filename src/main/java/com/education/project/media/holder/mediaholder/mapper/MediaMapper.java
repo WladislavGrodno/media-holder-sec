@@ -22,5 +22,4 @@ public interface MediaMapper {
     MediaInfoResponse toDtoInfo(Media media);
 
     List<MediaInfoResponse> toDtoInfo(List<Media> media);
-
 }

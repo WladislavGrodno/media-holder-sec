@@ -2,60 +2,37 @@ package com.education.project.media.holder.mediaholder.service;
 
 import com.education.project.media.holder.mediaholder.enums.Operation;
 import com.education.project.media.holder.mediaholder.enums.Role;
-import com.education.project.media.holder.mediaholder.integration.user.dto.ExternalUser;
 import com.education.project.media.holder.mediaholder.integration.user.UserClient;
+import com.education.project.media.holder.mediaholder.mapper.UserMapper;
 import jakarta.validation.constraints.NotNull;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.UUID;
 
-@Slf4j
 @Service
 public class PermissionServiceImp implements PermissionService{
     @Autowired
     private UserClient userClient;
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public boolean allowed(
             @NotNull UUID userID,
             @NotNull Operation operation){
-
-        switch (operation){
-            case DELETE, GET_INFO_LIST -> {
-                return getRole(userID) == Role.ADMINISTRATOR;
-            }
-            case GET, GET_INFO -> {
-                return true;
-            }
+        return switch (operation) {
+            case DELETE, GET_INFO_LIST -> getRole(userID) == Role.ADMINISTRATOR;
+            case GET, GET_INFO -> true;
             default -> {
                 Role role = getRole(userID);
-                return role != Role.ANONYMOUS && role != Role.UNKNOWN;
+                yield role != Role.ANONYMOUS && role != Role.UNKNOWN;
             }
-        }
+        };
     }
+
     private Role getRole(@NotNull UUID userID){
         try{
-            ExternalUser user =  userClient.getUser(userID);
-            if (user == null) return Role.UNKNOWN;
-            switch (user.roleDtoResp().roleDescr()){
-                case "system admin" ->{
-                    return Role.ADMINISTRATOR;
-                }
-                case "moderator" -> {
-                    return Role.MODERATOR;
-                }
-                case "user" -> {
-                    return Role.USER;
-                }
-                case "anonymous" -> {
-                    return Role.ANONYMOUS;
-                }
-                default -> {
-                    return Role.UNKNOWN;
-                }
-            }
+            return userMapper.toRole(userClient.getUser(userID));
         }
         catch (Exception e){
             return Role.UNKNOWN;

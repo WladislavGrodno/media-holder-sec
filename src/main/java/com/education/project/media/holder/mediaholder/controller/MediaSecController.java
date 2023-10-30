@@ -1,4 +1,4 @@
-package com.education.project.media.holder.mediaholder.apiController;
+package com.education.project.media.holder.mediaholder.controller;
 
 import com.education.project.media.holder.mediaholder.dto.request.MediaInfoRequest;
 import com.education.project.media.holder.mediaholder.dto.request.MediaRequest;
@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.UUID;
 
 /**
@@ -35,7 +34,7 @@ import java.util.UUID;
 @RestController
 @Validated
 @Tag(name = "Media-service-sec API")
-public class MediaSecuredApiController {
+public class MediaSecController {
     @Autowired
     @Qualifier("mediaServiceSecImp")
     private MediaServiceSec mediaService;
@@ -47,8 +46,8 @@ public class MediaSecuredApiController {
      * @return MediaInfoResponse object
      * @throws Exception thrown by strange situations
      */
-    @PostMapping(path = "/media", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    //@PostMapping("/media")
+    @PostMapping(
+            path = "/media", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(
             summary = "Add a new media to storage by authorized user",
             description = "Add a new media in to storage by authorized user")
@@ -57,30 +56,18 @@ public class MediaSecuredApiController {
     @ApiResponse(responseCode = "404", description = "The media was not added")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<MediaInfoResponse> createMedia(
-            @ModelAttribute
-            //("media")
-            //@RequestParam
-            //@RequestBody
-            //@RequestPart
-            MediaRequest media,
-            @RequestParam
-            UUID userID
+            @ModelAttribute MediaRequest media,
+            @RequestParam UUID userID
     ) throws Exception {
         return mediaService.createMedia(media, userID);
     }
 
-
-    //ready
     /**
      * Return media by id
      * @param id identifier of requested media file
      * @return requested media file
      */
-    @GetMapping(
-            "/media/{id}"
-            //value = "/media/{id}",
-            //produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
-    )
+    @GetMapping("/media/{id}")
     @Operation(
             summary = "Find a media by ID",
             description = "Return a media by ID")
@@ -88,7 +75,6 @@ public class MediaSecuredApiController {
     @ApiResponse(responseCode = "400", description = "Bad request")
     @ApiResponse(responseCode = "404", description = "The media was not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-
     public ResponseEntity<Resource> getMediaById(
             @PathVariable UUID id,
             @RequestParam UUID userID
@@ -96,8 +82,6 @@ public class MediaSecuredApiController {
         return mediaService.getMediaById(id, userID);
     }
 
-
-    //ready
     /**
      * Return media info by id
      * @param id identifier of requested media file
@@ -111,7 +95,6 @@ public class MediaSecuredApiController {
     @ApiResponse(responseCode = "400", description = "Bad request")
     @ApiResponse(responseCode = "404", description = "The media was not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-
     public ResponseEntity<MediaInfoResponse> getMediaInfoById(
             @PathVariable UUID id,
             @RequestParam UUID userID
@@ -119,8 +102,6 @@ public class MediaSecuredApiController {
         return mediaService.getMediaInfoById(id, userID);
     }
 
-
-    //ready
     /**
      * update media by ID
      * @param id identifier of updated media
@@ -135,7 +116,6 @@ public class MediaSecuredApiController {
     @ApiResponse(responseCode = "400", description = "Bad request")
     @ApiResponse(responseCode = "404", description = "The media was not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-
     public ResponseEntity<MediaInfoResponse> updateMedia(
             @PathVariable UUID id,
             @RequestBody MultipartFile mediaFile,
@@ -144,8 +124,6 @@ public class MediaSecuredApiController {
         return mediaService.updateMediaById(id, mediaFile, userID);
     }
 
-
-    //ready
     /**
      * update media info by ID
      * @param mediaInfo updated media info
@@ -160,7 +138,6 @@ public class MediaSecuredApiController {
     @ApiResponse(responseCode = "400", description = "Bad request")
     @ApiResponse(responseCode = "404", description = "The media was not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-
     public ResponseEntity<MediaInfoResponse> updateMediaInfo(
             @PathVariable UUID id,
             @RequestBody MediaInfoRequest mediaInfo,
@@ -169,8 +146,6 @@ public class MediaSecuredApiController {
         return mediaService.updateMediaInfoById(id, mediaInfo, userID);
     }
 
-
-    //ready
     /**
      * delete media by ID
      * @param id identifier of deleted media
@@ -183,14 +158,12 @@ public class MediaSecuredApiController {
     @ApiResponse(responseCode = "400", description = "Bad request")
     @ApiResponse(responseCode = "422", description = "Empty ID")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-
     public void deleteMediaById(
             @PathVariable UUID id,
             @RequestParam UUID userID
     ) throws Exception {
         mediaService.eraseMedia(id, userID);
     }
-
 
     @GetMapping("/media-info-list")
     @Operation(

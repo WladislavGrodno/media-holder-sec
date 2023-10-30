@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.util.UUID;
 
 public interface StorageService {
-
     Path save(@NotNull UUID id,
               @NotNull MultipartFile file) throws Exception;
 
@@ -22,7 +21,4 @@ public interface StorageService {
             @NotNull String fileName) throws IOException;
 
     void cleanPath(UUID id) throws IOException;
-
-    //Stream<Path> loadAll();
-    //void deleteAll();
 }

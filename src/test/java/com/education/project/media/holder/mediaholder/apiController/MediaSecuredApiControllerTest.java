@@ -47,7 +47,7 @@ import static org.hamcrest.Matchers.hasSize;
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
-class MediaSecuredApiControllerTest {
+class MediaSecControllerTest {
     private final Timestamp timestampBefore = Timestamp.from(Instant.now());
 
     @Autowired

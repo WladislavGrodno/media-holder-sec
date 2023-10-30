@@ -31,7 +31,6 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class MediaServiceSecImp implements MediaServiceSec {
-
     @Autowired
     private MediaRepository mediaRepository;
     @Autowired
@@ -42,7 +41,6 @@ public class MediaServiceSecImp implements MediaServiceSec {
     @Autowired
     @Qualifier("storageServiceImp")
     private StorageService storageService;
-
     @Autowired
     @Qualifier("permissionServiceImp")
     private PermissionService permission;
@@ -60,10 +58,9 @@ public class MediaServiceSecImp implements MediaServiceSec {
 
         if(!permission.allowed(userId, Operation.GET_INFO_LIST))
             throw new ExceptionAccessDenied();
-
         return new ResponseEntity<>(
-                mediaCriteriaRepository.findAllWithFilters(
-                        page, searchCriteria),
+                mediaCriteriaRepository
+                        .findAllWithFilters(page, searchCriteria),
                 HttpStatus.OK
         );
     }
@@ -71,10 +68,8 @@ public class MediaServiceSecImp implements MediaServiceSec {
     @Override
     public ResponseEntity<MediaInfoResponse> createMedia(
             @NotNull MediaRequest mediaRequest,
-            //@NotNull MultipartFile file,
             @NotNull UUID userId
     ) throws Exception {
-
         MultipartFile file = mediaRequest.fileBody();
         log.info("{\"add file\": {\"file size\": \"{}\"}}", file.getSize());
 
@@ -86,10 +81,8 @@ public class MediaServiceSecImp implements MediaServiceSec {
                         mediaRequest,
                         file.getOriginalFilename(),
                         file.getSize()));
-
         mediaResult.setFilePath(
                 storageService.save(mediaResult.getId(), file).toString());
-
         return new ResponseEntity<>(
                 mediaMapper.toDtoInfo(mediaRepository.save(mediaResult)),
                 HttpStatus.OK);
@@ -108,7 +101,6 @@ public class MediaServiceSecImp implements MediaServiceSec {
         Optional<Media> mediaOptional = mediaRepository.findById(id);
         if (mediaOptional.isEmpty())
             throw new ExceptionNotFound();
-
         Media media = mediaOptional.get();
         return new ResponseEntity<>(
                 storageService.load(media.getFilePath(), media.getFileName()),
@@ -128,7 +120,6 @@ public class MediaServiceSecImp implements MediaServiceSec {
         Optional<Media> mediaOptional = mediaRepository.findById(id);
         if (mediaOptional.isEmpty())
             throw new ExceptionNotFound();
-
         return new ResponseEntity<>(
                 mediaMapper.toDtoInfo(mediaOptional.get()),
                 HttpStatus.OK);
@@ -153,24 +144,19 @@ public class MediaServiceSecImp implements MediaServiceSec {
         Optional<Media> mediaOptional = mediaRepository.findById(id);
         if (mediaOptional.isEmpty())
             throw new ExceptionNotFound();
+
         Media media = mediaOptional.get();
-
         Path basePath = storageService.save(id, file);
-
         if (!Files.exists(basePath.resolve(newFileName)))
             throw new Exception("FILE NOT ACCEPTED");
 
         String oldFileName = media.getFileName();
         Long oldFileSize = media.getFileSize();
-
         media.setFileName(newFileName);
         media.setFileSize(newFileSize);
         Media savedMedia = mediaRepository.save(media);
-
         Files.delete(basePath.resolve(oldFileName));
-
         log.info("file size: old = {}, new = {}", oldFileSize, newFileSize);
-
         return new ResponseEntity<>(
                 mediaMapper.toDtoInfo(savedMedia),
                 HttpStatus.OK);
@@ -194,7 +180,6 @@ public class MediaServiceSecImp implements MediaServiceSec {
         Media media = mediaOptional.get();
         media.setName(mediaInfo.name());
         media.setDescription(mediaInfo.description());
-
         return new ResponseEntity<>(
                 mediaMapper.toDtoInfo(mediaRepository.save(media)),
                 HttpStatus.OK);

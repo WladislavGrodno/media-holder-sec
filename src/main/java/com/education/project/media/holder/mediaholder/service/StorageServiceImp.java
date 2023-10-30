@@ -6,7 +6,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,11 +19,11 @@ public class StorageServiceImp implements StorageService {
 
     @Override
     public Path save(UUID id, MultipartFile file) throws Exception {
-        Path path = pathChain.path(id);
         String name = file.getOriginalFilename();
         if (name == null || name.isEmpty()) {
             throw new Exception("EMPTY FILE NAME");
         }
+        Path path = pathChain.path(id);
         Files.copy(
                 file.getInputStream(),
                 path.resolve(name),
