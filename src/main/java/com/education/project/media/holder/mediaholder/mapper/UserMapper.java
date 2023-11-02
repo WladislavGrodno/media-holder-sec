@@ -7,7 +7,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     default Role toRole(ExternalUser user){
-        System.out.println(user);
         if (user == null) return Role.UNKNOWN;
         return switch (user.roleDtoResp().roleDescr()){
             case "system admin" -> Role.ADMINISTRATOR;

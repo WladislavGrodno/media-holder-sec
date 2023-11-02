@@ -1,6 +1,5 @@
 package com.education.project.media.holder.mediaholder.apiController;
 
-import com.education.project.media.holder.mediaholder.dto.request.MediaInfoRequest;
 import com.education.project.media.holder.mediaholder.dto.request.MediaRequest;
 import com.education.project.media.holder.mediaholder.integration.user.UserClient;
 import com.education.project.media.holder.mediaholder.integration.user.dto.ExternalUser;
@@ -9,7 +8,6 @@ import com.education.project.media.holder.mediaholder.integration.user.dto.Exter
 import com.education.project.media.holder.mediaholder.repository.MediaRepository;
 import com.education.project.media.holder.mediaholder.service.PermissionServiceImp;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,18 +27,12 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.multipart.MultipartFile;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.UUID;
-
-import static io.restassured.RestAssured.head;
 import static org.assertj.core.api.Assertions.assertThat;
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.hasSize;
-//import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -53,9 +44,6 @@ class MediaSecControllerTest {
     @Autowired
     private MediaRepository mediaRepository;
 
-//    @Autowired
-//    private MediaClient mediaClient;
-
     @Mock
     private static UserClient userClient;
 
@@ -65,11 +53,8 @@ class MediaSecControllerTest {
     @LocalServerPort
     private Integer port;
 
-    //@Container
-    //@ServiceConnection
     private static final PostgreSQLContainer<?> postgres =
             new PostgreSQLContainer<>("postgres:15");
-
 
     private final Path storageRootPath =
             Paths.get("src/test/resources/media-storage").normalize();
@@ -145,14 +130,9 @@ class MediaSecControllerTest {
         registry.add("spring.datasource.password", postgres::getPassword);
     }
 
-
-    //@Autowired
-    //CustomerRepository customerRepository;
-
     @BeforeEach
     void setUp() {
         RestAssured.baseURI = "http://localhost:" + port;
-    //    customerRepository.deleteAll();
     }
 
     @Test
@@ -162,21 +142,6 @@ class MediaSecControllerTest {
 
     @Test
     void createMedia() throws Exception {
-
-        /*
-        RequestSpecification requestSpec = given()
-                .baseUri("http://cookiemonster.com")
-                .header("Language", "en");
-        requestSpec.when()
-                .get("/cookiesformonster")
-                .then()
-                .statusCode(200);
-        requestSpec.when()
-                .get("/soup")
-                .then()
-                .statusCode(400);
-         */
-
         final MultipartFile file = new MockMultipartFile(
                 "haha-ha.txt",
                 fileName,

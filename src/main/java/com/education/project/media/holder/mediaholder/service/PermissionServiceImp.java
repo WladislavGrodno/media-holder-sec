@@ -5,10 +5,12 @@ import com.education.project.media.holder.mediaholder.enums.Role;
 import com.education.project.media.holder.mediaholder.integration.user.UserClient;
 import com.education.project.media.holder.mediaholder.mapper.UserMapper;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class PermissionServiceImp implements PermissionService{
     @Autowired
@@ -35,6 +37,7 @@ public class PermissionServiceImp implements PermissionService{
             return userMapper.toRole(userClient.getUser(userID));
         }
         catch (Exception e){
+            log.error(e.getMessage());
             return Role.UNKNOWN;
         }
     }
